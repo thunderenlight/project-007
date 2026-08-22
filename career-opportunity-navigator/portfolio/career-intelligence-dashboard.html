@@ -186,11 +186,12 @@
     .opp-body { padding: 20px 24px; }
 
     .badge { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: var(--rsx); }
-    .badge-pursue { background: rgba(13,212,207,0.12); color: var(--teal); border: 1px solid rgba(13,212,207,0.28); }
-    .badge-pass   { background: rgba(139,92,246,0.1);  color: var(--purple); border: 1px solid rgba(139,92,246,0.22); }
+    .badge-pursue  { background: rgba(13,212,207,0.12);  color: var(--teal);   border: 1px solid rgba(13,212,207,0.28); }
+    .badge-pass    { background: rgba(139,92,246,0.1);   color: var(--purple); border: 1px solid rgba(139,92,246,0.22); }
+    .badge-consider{ background: rgba(240,180,41,0.1);   color: var(--gold);   border: 1px solid rgba(240,180,41,0.26); }
 
     .score-big { font-size: 52px; font-weight: 900; line-height: 1; }
-    .score-big.t { color: var(--teal); } .score-big.p { color: var(--purple); }
+    .score-big.t { color: var(--teal); } .score-big.p { color: var(--purple); } .score-big.g { color: var(--gold); }
     .score-max { font-size: 18px; color: var(--muted); margin-left: 4px; }
 
     /* ── Dim bars ── */
@@ -247,7 +248,7 @@
     .tech-name { font-size: 13px; font-weight: 600; color: var(--ink); flex: 1; }
     .cov-row { display: flex; gap: 4px; }
     .cov { width: 8px; height: 8px; border-radius: 50%; }
-    .cov.t { background: var(--teal); } .cov.p { background: var(--purple); } .cov.e { background: rgba(255,255,255,0.1); }
+    .cov.t { background: var(--teal); } .cov.p { background: var(--purple); } .cov.g { background: var(--gold); } .cov.e { background: rgba(255,255,255,0.1); }
 
     .track-card {
       background: var(--s1); border: 1px solid var(--border2); border-radius: var(--r);
@@ -340,7 +341,7 @@
     <div class="kpi-grid">
       <div class="kpi t">
         <div class="kpi-label">Opportunities Evaluated</div>
-        <div class="kpi-val t" data-count="2">0</div>
+        <div class="kpi-val t" data-count="3">0</div>
         <div class="kpi-sub">Active pipeline · Aug 2026</div>
       </div>
       <div class="kpi p">
@@ -446,7 +447,7 @@
       <div style="font-size:11px;color:var(--muted);">Scores: oracle-adjusted (raw in parentheses)</div>
     </div>
 
-    <div class="g2" style="margin-bottom:24px;">
+    <div class="g3" style="margin-bottom:24px;">
 
       <!-- Meta card -->
       <div class="opp-card teal-b">
@@ -518,11 +519,46 @@
         </div>
       </div>
 
+      <!-- App Support card -->
+      <div class="opp-card" style="border-color:rgba(240,180,41,0.22);">
+        <div class="opp-head" style="background:rgba(240,180,41,0.04);">
+          <div>
+            <div class="opp-client" style="color:var(--gold);">Accenture Internal</div>
+            <div class="opp-title">App Support Engineer — Front End</div>
+            <div class="opp-meta-row">
+              <span class="opp-meta-item">🆔 Role 6460973</span>
+              <span class="opp-meta-item">⏱ Ongoing</span>
+              <span class="opp-meta-item">🧑‍💼 Mentor on team</span>
+            </div>
+          </div>
+          <span class="badge badge-consider">CONSIDER</span>
+        </div>
+        <div class="opp-body">
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px;">
+            <div class="score-big g">53</div><div class="score-max">/100</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px;">Oracle-Adjusted · Consider</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Raw: 50/100 · <span class="ev ev-w">DRIFT DETECTED</span> — "Pursue" rebuilt to Consider; mentor context unverified</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Key Dimensions</div>
+          <div class="dim-row"><div class="dim-label">React / Front-End</div><div class="dim-track"><div class="dim-fill" style="width:90%;background:var(--gold);"></div></div><div class="dim-score" style="color:var(--gold);">9</div></div>
+          <div class="dim-row"><div class="dim-label">Eng. Proximity</div><div class="dim-track"><div class="dim-fill" style="width:80%;background:var(--gold);"></div></div><div class="dim-score" style="color:var(--gold);">8</div></div>
+          <div class="dim-row"><div class="dim-label">Leadership</div><div class="dim-track"><div class="dim-fill" style="width:70%;background:var(--yellow);"></div></div><div class="dim-score" style="color:var(--yellow);">7</div></div>
+          <div class="dim-row"><div class="dim-label">Learning*</div><div class="dim-track"><div class="dim-fill" style="width:70%;background:var(--yellow);"></div></div><div class="dim-score" style="color:var(--yellow);">7</div></div>
+          <div class="dim-row"><div class="dim-label">Cloud (AWS)</div><div class="dim-track"><div class="dim-fill" style="width:20%;background:var(--red);"></div></div><div class="dim-score" style="color:var(--red);">2</div></div>
+          <div class="dim-row"><div class="dim-label">AI Exposure</div><div class="dim-track"><div class="dim-fill" style="width:10%;background:var(--red);"></div></div><div class="dim-score" style="color:var(--red);">1</div></div>
+          <div style="font-size:10px;color:var(--muted2);margin-top:6px;">* Oracle-adjusted from 6 — mentor + senior dev context partially acknowledged</div>
+          <div class="risk-block risk-yellow" style="margin-top:14px;border-color:rgba(240,180,41,0.22);">
+            <span style="color:var(--gold);font-weight:700;">Decision by 2026-08-24: </span>
+            <span style="color:var(--muted);">Confirm mentor structure before committing. Structured pairing + growth routing confirmed → Pursue. Vague answer → Consider at 53, taken with clear eyes.</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Radar -->
     <div class="chart-wrap reveal">
-      <div class="chart-title">10-Dimension Radar — Both Roles</div>
+      <div class="chart-title">10-Dimension Radar — All Roles</div>
       <div class="chart-sub">Solid = raw scores · Dashed = oracle-adjusted · Diamond symbol = oracle series</div>
       <div id="chart-radar"></div>
     </div>
@@ -783,15 +819,15 @@
 <script>
   /* ── DATA ── */
   const TECH = [
-    { rank:1, skill:'React + TypeScript',          meta:true,  msft:false },
-    { rank:2, skill:'AWS Architecture + Serverless', meta:true,  msft:false },
-    { rank:3, skill:'Python + FastAPI',              meta:true,  msft:false },
-    { rank:4, skill:'Git + GitHub + CI/CD',          meta:true,  msft:true  },
-    { rank:5, skill:'Claude Code + Agent Architecture',meta:false,msft:false },
-    { rank:6, skill:'MCP + API Integration',         meta:false, msft:false },
-    { rank:7, skill:'LLMOps + Evaluation',           meta:false, msft:true  },
-    { rank:8, skill:'RAG Architecture',              meta:false, msft:false },
-    { rank:9, skill:'Knowledge Graphs',              meta:false, msft:false }
+    { rank:1, skill:'React + TypeScript',             meta:true,  msft:false, appsup:true  },
+    { rank:2, skill:'AWS Architecture + Serverless',  meta:true,  msft:false, appsup:false },
+    { rank:3, skill:'Python + FastAPI',               meta:true,  msft:false, appsup:false },
+    { rank:4, skill:'Git + GitHub + CI/CD',           meta:true,  msft:true,  appsup:false },
+    { rank:5, skill:'Claude Code + Agent Architecture',meta:false,msft:false, appsup:false },
+    { rank:6, skill:'MCP + API Integration',          meta:false, msft:false, appsup:false },
+    { rank:7, skill:'LLMOps + Evaluation',            meta:false, msft:true,  appsup:false },
+    { rank:8, skill:'RAG Architecture',               meta:false, msft:false, appsup:false },
+    { rank:9, skill:'Knowledge Graphs',               meta:false, msft:false, appsup:false }
   ];
 
   const TRACKS = [
@@ -860,7 +896,9 @@
         { value:[8,7,9,9,2,9,9,6,3,8],  name:'Meta — raw',          lineStyle:{color:'#0dd4cf',width:2.5}, areaStyle:{color:'rgba(13,212,207,0.13)'}, itemStyle:{color:'#0dd4cf'} },
         { value:[8,7,9,7,2,7,9,6,3,8],  name:'Meta — oracle',       lineStyle:{color:'#0dd4cf',width:1.5,type:'dashed'}, areaStyle:{color:'rgba(13,212,207,0.04)'}, itemStyle:{color:'#0dd4cf'}, symbol:'diamond', symbolSize:6 },
         { value:[5,9,7,9,2,7,8,5,3,5],  name:'Microsoft — raw',     lineStyle:{color:'#8b5cf6',width:2.5}, areaStyle:{color:'rgba(139,92,246,0.11)'}, itemStyle:{color:'#8b5cf6'} },
-        { value:[5,9,7,6,2,4,8,2,3,5],  name:'Microsoft — oracle',  lineStyle:{color:'#8b5cf6',width:1.5,type:'dashed'}, areaStyle:{color:'rgba(139,92,246,0.03)'}, itemStyle:{color:'#8b5cf6'}, symbol:'diamond', symbolSize:6 }
+        { value:[5,9,7,6,2,4,8,2,3,5],  name:'Microsoft — oracle',  lineStyle:{color:'#8b5cf6',width:1.5,type:'dashed'}, areaStyle:{color:'rgba(139,92,246,0.03)'}, itemStyle:{color:'#8b5cf6'}, symbol:'diamond', symbolSize:6 },
+        { value:[2,1,9,8,2,6,5,5,7,5],  name:'App Support — raw',   lineStyle:{color:'#f0b429',width:2.5}, areaStyle:{color:'rgba(240,180,41,0.10)'}, itemStyle:{color:'#f0b429'} },
+        { value:[2,1,9,8,2,7,6,6,7,5],  name:'App Support — oracle',lineStyle:{color:'#f0b429',width:1.5,type:'dashed'}, areaStyle:{color:'rgba(240,180,41,0.03)'}, itemStyle:{color:'#f0b429'}, symbol:'diamond', symbolSize:6 }
       ]}]
     });
     window.addEventListener('resize', () => c.resize());
@@ -872,20 +910,24 @@
     const dims = ['Cloud','AI Exposure','React / FE','Eng. Proximity','Product','Learning','Marketability','Portfolio','Leadership','Compensation'];
     const meta = [8,7,9,7,2,7,9,6,3,8];
     const msft = [5,9,7,6,2,4,8,2,3,5];
+    const appsup = [2,1,9,8,2,7,6,6,7,5];
     const color = (v, hue) => `rgba(${hue},${Math.max(0.25, v/10)})`;
     c.setOption({
       backgroundColor:'transparent',
       tooltip:{ trigger:'axis', axisPointer:{type:'shadow'}, backgroundColor:'#071528', borderColor:'#1e3a5f', textStyle:{color:'#e2e8f0',fontSize:12} },
-      legend:{ data:['Meta (oracle-adj)','Microsoft (oracle-adj)'], textStyle:{color:'#64748b',fontSize:11}, top:0 },
-      grid:{ left:100, right:30, top:38, bottom:20 },
+      legend:{ data:['Meta (oracle-adj)','Microsoft (oracle-adj)','App Support (oracle-adj)'], textStyle:{color:'#64748b',fontSize:11}, top:0 },
+      grid:{ left:100, right:30, top:46, bottom:20 },
       xAxis:{ type:'value', max:10, splitLine:{lineStyle:{color:'rgba(100,116,139,0.1)'}}, axisLabel:{color:'#64748b',fontSize:11} },
       yAxis:{ type:'category', data:dims, axisLabel:{color:'#94a3b8',fontSize:11}, axisLine:{show:false}, axisTick:{show:false} },
       series:[
-        { name:'Meta (oracle-adj)', type:'bar', barWidth:10, barGap:'30%',
+        { name:'Meta (oracle-adj)', type:'bar', barWidth:8, barGap:'20%',
           data:meta.map(v => ({ value:v, itemStyle:{ color:v>=8?'#0dd4cf':v>=6?'rgba(13,212,207,0.72)':v>=4?'rgba(13,212,207,0.45)':'rgba(13,212,207,0.25)', borderRadius:3 } })),
           label:{show:true, position:'right', color:'#64748b', fontSize:11} },
-        { name:'Microsoft (oracle-adj)', type:'bar', barWidth:10,
+        { name:'Microsoft (oracle-adj)', type:'bar', barWidth:8,
           data:msft.map(v => ({ value:v, itemStyle:{ color:v>=8?'#8b5cf6':v>=6?'rgba(139,92,246,0.72)':v>=4?'rgba(139,92,246,0.45)':'rgba(139,92,246,0.25)', borderRadius:3 } })),
+          label:{show:true, position:'right', color:'#64748b', fontSize:11} },
+        { name:'App Support (oracle-adj)', type:'bar', barWidth:8,
+          data:appsup.map(v => ({ value:v, itemStyle:{ color:v>=8?'#f0b429':v>=6?'rgba(240,180,41,0.72)':v>=4?'rgba(240,180,41,0.45)':'rgba(240,180,41,0.25)', borderRadius:3 } })),
           label:{show:true, position:'right', color:'#64748b', fontSize:11} }
       ]
     });
@@ -899,8 +941,9 @@
         <div class="tech-rank">${t.rank}</div>
         <div class="tech-name">${t.skill}</div>
         <div class="cov-row">
-          <span class="cov ${t.meta?'t':'e'}" title="${t.meta?'Covered by Meta engagement':'Not covered by current opportunities'}"></span>
-          <span class="cov ${t.msft?'p':'e'}" title="${t.msft?'Covered by Microsoft engagement':'Not covered'}"></span>
+          <span class="cov ${t.meta?'t':'e'}" title="${t.meta?'Covered by Meta engagement':'Not covered by Meta'}"></span>
+          <span class="cov ${t.msft?'p':'e'}" title="${t.msft?'Covered by Microsoft engagement':'Not covered by Microsoft'}"></span>
+          <span class="cov ${t.appsup?'g':'e'}" title="${t.appsup?'Covered by App Support engagement':'Not covered by App Support'}"></span>
         </div>
       </div>`).join('');
 
