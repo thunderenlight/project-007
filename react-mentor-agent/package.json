@@ -1,0 +1,14 @@
+{
+  "name": "react-mentor-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "A React teacher + builder agent: explains at the learner's level, scaffolds runnable examples, sets challenges, and adapts to progress.",
+  "bin": { "mentor": "src/mentor.js" },
+  "scripts": {
+    "mentor": "node src/mentor.js",
+    "demo": "bash demo.sh",
+    "status": "node src/mentor.js status",
+    "next": "node src/mentor.js next"
+  }
+}

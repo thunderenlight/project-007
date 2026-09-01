@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Board — Self-Contained Preview</title>
+  <!--
+    ========================================================================
+    ZERO-DEPENDENCY PREVIEW  (no CDN, no React, no build, no internet)
+    ------------------------------------------------------------------------
+    This single file renders the SAME dashboard + task board as the React
+    project, so you can *see* it anywhere. To keep it dependency-free it uses
+    plain JavaScript "component functions" that return DOM nodes.
+
+    Each function below maps 1:1 to a React component in /src so you can learn
+    the reusable-component MINDSET here, then see the real JSX in VS Code:
+
+        Card()        ->  src/components/Card.tsx
+        KpiCard()     ->  src/components/KpiCard.tsx
+        Dashboard()   ->  src/components/Dashboard.tsx
+        TaskItem()    ->  src/components/TaskItem.tsx
+        AddTaskForm() ->  src/components/AddTaskForm.tsx
+        TaskBoard()   ->  src/components/TaskBoard.tsx
+        App()         ->  src/App.tsx
+    ========================================================================
+  -->
+  <style>
+    :root{--bg:#0f172a;--card:#1e293b;--accent:#6366f1;--text:#e2e8f0;--muted:#94a3b8;
+          --up:#34d399;--down:#f87171;--border:#334155;}
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+         background:radial-gradient(1200px 600px at 20% -10%,#312e81 0%,var(--bg) 55%);
+         color:var(--text);min-height:100vh;}
+    .wrap{max-width:780px;margin:0 auto;padding:40px 20px 64px;}
+    h1{font-size:1.7rem;margin:0 0 4px;} p.sub{color:var(--muted);margin:0;}
+    .section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;
+                   color:var(--muted);margin:28px 0 12px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;}
+    .card.kpi{display:flex;flex-direction:column;gap:6px;}
+    .kpi-top{display:flex;justify-content:space-between;align-items:center;}
+    .kpi-icon{font-size:1.4rem;} .kpi-delta{font-size:.78rem;font-weight:700;}
+    .kpi-delta.up{color:var(--up);} .kpi-delta.down{color:var(--down);}
+    .kpi-value{font-size:1.9rem;font-weight:800;line-height:1;}
+    .kpi-label{color:var(--muted);font-size:.85rem;}
+    .row{display:flex;gap:8px;margin-bottom:14px;}
+    .row input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--border);
+               background:#0f172a;color:var(--text);font-size:15px;outline:none;}
+    .row input:focus{border-color:var(--accent);}
+    button{padding:12px 16px;border:none;border-radius:10px;background:var(--accent);
+           color:#fff;font-weight:600;cursor:pointer;font-size:14px;}
+    button:hover{filter:brightness(1.1);}
+    ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+    li{display:flex;align-items:center;gap:12px;background:#0f172a;padding:12px 14px;
+       border-radius:10px;border:1px solid var(--border);}
+    li.done span{text-decoration:line-through;color:var(--muted);}
+    li span{flex:1;} .del{background:transparent;color:var(--muted);padding:4px 8px;font-size:18px;}
+    .del:hover{color:var(--down);}
+    .stats{color:var(--muted);font-size:13px;margin-top:14px;text-align:center;}
+    .empty{color:var(--muted);text-align:center;padding:20px;}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+  // -------------------------------------------------------------------------
+  // Tiny helper: build a DOM element. Think of this as our stand-in for JSX.
+  //   h("div", {className:"card"}, child1, child2)   ~   <div className="card">...</div>
+  // -------------------------------------------------------------------------
+  function h(tag, props = {}, ...children) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === "className") el.className = v;
+      else if (k.startsWith("on") && typeof v === "function")
+        el.addEventListener(k.slice(2).toLowerCase(), v);
+      else if (k === "checked") el.checked = v;
+      else if (k === "value") el.value = v;
+      else el.setAttribute(k, v);
+    }
+    for (const c of children.flat()) {
+      if (c == null || c === false) continue;
+      el.appendChild(typeof c === "string" || typeof c === "number"
+        ? document.createTextNode(String(c)) : c);
+    }
+    return el;
+  }
+
+  // ---- DATA (mirrors src/data/kpis.ts) ------------------------------------
+  const KPIS = [
+    { id:"total", label:"Total Tasks", value:"24",  delta:8,   icon:"📋" },
+    { id:"open",  label:"Open Tasks",  value:"9",   delta:-12, icon:"🟡" },
+    { id:"done",  label:"Completed",   value:"15",  delta:20,  icon:"✅" },
+    { id:"rate",  label:"Completion",  value:"62%", delta:5,   icon:"📈" },
+  ];
+
+  // ---- Card (mirrors Card.tsx): reusable styled container -----------------
+  function Card(children, extra = "") {
+    return h("div", { className: `card ${extra}`.trim() }, children);
+  }
+
+  // ---- KpiCard (mirrors KpiCard.tsx): one metric tile from props ----------
+  function KpiCard(kpi) {
+    const up = kpi.delta >= 0;
+    return Card([
+      h("div", { className: "kpi-top" },
+        h("span", { className: "kpi-icon" }, kpi.icon),
+        h("span", { className: `kpi-delta ${up ? "up" : "down"}` },
+          `${up ? "▲" : "▼"} ${Math.abs(kpi.delta)}%`)),
+      h("div", { className: "kpi-value" }, kpi.value),
+      h("div", { className: "kpi-label" }, kpi.label),
+    ], "kpi");
+  }
+
+  // ---- Dashboard (mirrors Dashboard.tsx): grid of KpiCards via map --------
+  function Dashboard(kpis) {
+    return h("section", {},
+      h("h2", { className: "section-title" }, "Dashboard"),
+      h("div", { className: "kpi-grid" }, kpis.map(KpiCard)));
+  }
+
+  // ---- TaskBoard (mirrors TaskBoard.tsx): owns state + re-renders ---------
+  // Plain JS has no useState, so we keep an array and re-render on change.
+  function TaskBoard(mount) {
+    let tasks = [
+      { id: 1, text: "Open this folder in VS Code", done: true },
+      { id: 2, text: "Read the comments in each component", done: false },
+      { id: 3, text: "Add a new KPI in src/data/kpis.ts", done: false },
+    ];
+    const add    = (t)  => { tasks = [...tasks, { id: Date.now(), text: t, done: false }]; render(); };
+    const toggle = (id) => { tasks = tasks.map(t => t.id===id?{...t,done:!t.done}:t); render(); };
+    const remove = (id) => { tasks = tasks.filter(t => t.id!==id); render(); };
+
+    // AddTaskForm (mirrors AddTaskForm.tsx)
+    function AddTaskForm() {
+      const input = h("input", { placeholder: "What needs doing?" });
+      input.addEventListener("keydown", e => { if (e.key==="Enter"){ add(input.value.trim()&&input.value); input.value=""; }});
+      const btn = h("button", { onClick: () => { if(input.value.trim()){ add(input.value.trim()); input.value=""; } } }, "Add");
+      return h("div", { className: "row" }, input, btn);
+    }
+    // TaskItem (mirrors TaskItem.tsx)
+    function TaskItem(t) {
+      return h("li", { className: t.done ? "done" : "" },
+        h("input", { type:"checkbox", checked:t.done, onChange:()=>toggle(t.id) }),
+        h("span", {}, t.text),
+        h("button", { className:"del", onClick:()=>remove(t.id) }, "×"));
+    }
+    function render() {
+      const remaining = tasks.filter(t => !t.done).length;
+      const body = tasks.length === 0
+        ? h("div", { className: "empty" }, "Nothing here yet — add your first task ✨")
+        : h("ul", {}, tasks.map(TaskItem));
+      const section = h("section", {},
+        h("h2", { className: "section-title" }, "Task Board"),
+        Card([ AddTaskForm(), body,
+          h("div", { className: "stats" }, `${remaining} of ${tasks.length} remaining`) ]));
+      mount.replaceChildren(section);
+    }
+    render();
+  }
+
+  // ---- App (mirrors App.tsx): composes the two sections -------------------
+  function App(root) {
+    const wrap = h("div", { className: "wrap" },
+      h("header", {},
+        h("h1", {}, "🗂️ Task Board"),
+        h("p", { className: "sub" },
+          "Self-contained preview — reusable components, no backend, no DB.")),
+      Dashboard(KPIS));
+    const boardMount = h("div", {});
+    wrap.appendChild(boardMount);
+    root.appendChild(wrap);
+    TaskBoard(boardMount);
+  }
+
+  App(document.getElementById("root"));
+  </script>
+</body>
+</html>

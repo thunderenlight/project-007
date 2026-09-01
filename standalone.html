@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React Task Board — Zero-Build Demo</title>
+  <!-- React + Babel loaded from CDN. No npm, no bundler, no backend, no DB. -->
+  <script crossorigin src="https://unpkg.com/react@19/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root { --bg:#0f172a; --card:#1e293b; --accent:#6366f1; --text:#e2e8f0; --muted:#94a3b8; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+           background: radial-gradient(1200px 600px at 20% -10%, #312e81 0%, var(--bg) 55%); color:var(--text); min-height:100vh; }
+    .wrap { max-width: 620px; margin: 0 auto; padding: 48px 20px; }
+    h1 { font-size: 1.6rem; margin: 0 0 4px; }
+    p.sub { color: var(--muted); margin: 0 0 24px; }
+    .row { display:flex; gap:8px; margin-bottom: 20px; }
+    input { flex:1; padding:12px 14px; border-radius:10px; border:1px solid #334155;
+            background:var(--card); color:var(--text); font-size:15px; outline:none; }
+    input:focus { border-color: var(--accent); }
+    button { padding:12px 16px; border:none; border-radius:10px; background:var(--accent);
+             color:white; font-weight:600; cursor:pointer; font-size:14px; }
+    button:hover { filter: brightness(1.1); }
+    ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+    li { display:flex; align-items:center; gap:12px; background:var(--card);
+         padding:12px 14px; border-radius:10px; border:1px solid #334155; }
+    li.done span { text-decoration: line-through; color: var(--muted); }
+    li span { flex:1; }
+    .del { background:transparent; color:var(--muted); padding:4px 8px; font-size:18px; }
+    .del:hover { color:#f87171; }
+    .stats { color:var(--muted); font-size:13px; margin-top:16px; text-align:center; }
+    .empty { color:var(--muted); text-align:center; padding:24px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+
+    function App() {
+      const [tasks, setTasks] = useState([
+        { id: 1, text: "Open this file in a browser", done: true },
+        { id: 2, text: "Add your own task below", done: false },
+      ]);
+      const [draft, setDraft] = useState("");
+
+      const add = () => {
+        const text = draft.trim();
+        if (!text) return;
+        setTasks([...tasks, { id: Date.now(), text, done: false }]);
+        setDraft("");
+      };
+      const toggle = (id) => setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+      const remove = (id) => setTasks(tasks.filter(t => t.id !== id));
+
+      const remaining = tasks.filter(t => !t.done).length;
+
+      return (
+        <div className="wrap">
+          <h1>🗂️ Task Board</h1>
+          <p className="sub">A pure client-side React app — no backend, no database.</p>
+          <div className="row">
+            <input
+              value={draft}
+              placeholder="What needs doing?"
+              onChange={e => setDraft(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && add()}
+            />
+            <button onClick={add}>Add</button>
+          </div>
+          {tasks.length === 0
+            ? <div className="empty">Nothing here yet — add your first task ✨</div>
+            : <ul>
+                {tasks.map(t => (
+                  <li key={t.id} className={t.done ? "done" : ""}>
+                    <input type="checkbox" checked={t.done} onChange={() => toggle(t.id)} />
+                    <span>{t.text}</span>
+                    <button className="del" onClick={() => remove(t.id)}>×</button>
+                  </li>
+                ))}
+              </ul>}
+          <div className="stats">{remaining} of {tasks.length} remaining</div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

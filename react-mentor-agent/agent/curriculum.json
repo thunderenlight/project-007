@@ -1,0 +1,261 @@
+{
+  "meta": {
+    "name": "React Mentor Curriculum",
+    "anchorProject": "Dashboard + Task Board",
+    "levels": ["Novice", "Advanced Beginner", "Competent", "Proficient", "Advanced", "Expert"]
+  },
+  "concepts": [
+    {
+      "id": "components",
+      "title": "Components",
+      "level": 0,
+      "prereqs": [],
+      "why": "Components are reusable building blocks — like LEGO bricks you snap together to build a UI.",
+      "explain": {
+        "eli5": "A component is a function that returns some UI. Call it once, get one brick. Call it ten times, get ten identical bricks you can arrange however you like.",
+        "standard": "A React component is a function returning JSX. Name it in PascalCase. Rendering <Hello /> calls the function and inserts its output into the tree.",
+        "deep": "Components are pure functions of their inputs (props). React calls them to produce a virtual tree, diffs it against the previous one, and applies minimal DOM updates. Keep them pure and side-effect-free during render."
+      },
+      "example": "function Hello() {\n  return <h1>Hello 👋</h1>;\n}\n// Use it like an HTML tag:\n// <Hello />",
+      "predict": "If you render <Hello /> three times, how many <h1> elements appear? (Answer: three.)",
+      "challenge": {
+        "prompt": "Create a <Badge /> component that renders the text 'New'. Then render it twice.",
+        "starter": "function Badge() {\n  // return JSX here\n}\n\nfunction App() {\n  return (\n    <div>\n      {/* render two Badges */}\n    </div>\n  );\n}",
+        "solution": "function Badge() {\n  return <span className=\"badge\">New</span>;\n}\nfunction App() {\n  return <div><Badge /><Badge /></div>;\n}",
+        "check": ["Badge returns JSX", "App renders Badge at least twice"]
+      },
+      "misconceptions": ["Forgetting PascalCase (react treats lowercase as HTML tags).", "Returning multiple siblings without a wrapper or <>...</> fragment."]
+    },
+    {
+      "id": "props",
+      "title": "Props",
+      "level": 1,
+      "prereqs": ["components"],
+      "why": "Props let ONE component render MANY different outputs — the key to reuse.",
+      "explain": {
+        "eli5": "Props are the inputs you pass to a component, like arguments to a function. Same brick, different label.",
+        "standard": "Pass data via attributes: <KpiCard label=\"Open\" value=\"9\" />. Read them from the props object (often destructured) inside the component.",
+        "deep": "Props are read-only (immutable from the child's view). This one-way data flow makes rendering predictable. Type them with an interface in TS so the compiler enforces the contract."
+      },
+      "example": "interface BadgeProps { text: string; }\nfunction Badge({ text }: BadgeProps) {\n  return <span className=\"badge\">{text}</span>;\n}\n// <Badge text=\"New\" />  and  <Badge text=\"Sale\" /> reuse the SAME component",
+      "predict": "What renders for <Badge text=\"Beta\" />? (Answer: a span containing 'Beta'.)",
+      "challenge": {
+        "prompt": "Turn KpiCard into a prop-driven component that accepts label, value, and icon, then render two different KPIs.",
+        "starter": "interface KpiProps { label: string; value: string; icon: string; }\nfunction KpiCard(props: KpiProps) {\n  // return a card showing icon, value, label\n}",
+        "solution": "function KpiCard({ label, value, icon }: KpiProps) {\n  return (\n    <div className=\"card\">\n      <div>{icon}</div>\n      <div className=\"kpi-value\">{value}</div>\n      <div className=\"kpi-label\">{label}</div>\n    </div>\n  );\n}",
+        "check": ["Destructures label, value, icon", "Renders all three values"]
+      },
+      "misconceptions": ["Trying to reassign props inside the child.", "Forgetting the curly braces to embed a JS value in JSX."]
+    },
+    {
+      "id": "children-composition",
+      "title": "Children & Composition",
+      "level": 1,
+      "prereqs": ["props"],
+      "why": "The `children` prop lets you write ONE generic container (like Card) and reuse it everywhere.",
+      "explain": {
+        "eli5": "children is whatever you put between the opening and closing tags. Card wraps it in a nice box without caring what's inside.",
+        "standard": "Accept `children: ReactNode` and render {children}. Now <Card><KpiCard/></Card> and <Card><ul>…</ul></Card> share the same styling.",
+        "deep": "Composition beats configuration: instead of a Card with 20 boolean props, pass content as children. This is React's answer to inheritance — compose, don't extend."
+      },
+      "example": "import type { ReactNode } from 'react';\nfunction Card({ children }: { children: ReactNode }) {\n  return <div className=\"card\">{children}</div>;\n}\n// <Card><h2>Anything</h2></Card>",
+      "predict": "Can one Card wrap a KpiCard and another Card wrap a whole task list? (Answer: yes — that's the point.)",
+      "challenge": {
+        "prompt": "Write a Card that renders its children, then wrap two totally different pieces of UI with it.",
+        "starter": "function Card({ children }) {\n  // wrap children in a styled div\n}",
+        "solution": "function Card({ children }) { return <div className=\"card\">{children}</div>; }",
+        "check": ["Renders {children}", "Reused around two different contents"]
+      },
+      "misconceptions": ["Forgetting to actually render {children}.", "Over-configuring with props instead of composing."]
+    },
+    {
+      "id": "lists-keys",
+      "title": "Lists & Keys",
+      "level": 1,
+      "prereqs": ["props"],
+      "why": "Render many components from data with .map — add DATA, not markup.",
+      "explain": {
+        "eli5": "Have a list of things? .map turns each item into a component. Give each a unique key so React can tell them apart.",
+        "standard": "kpis.map(k => <KpiCard key={k.id} {...k} />). The key must be stable and unique among siblings.",
+        "deep": "Keys let React's reconciler match old and new list items, preserving state and minimizing DOM churn. Never use array index as key for reorderable/removable lists."
+      },
+      "example": "const KPIS = [ {id:'a',label:'Open',value:'9',icon:'🟡'}, {id:'b',label:'Done',value:'15',icon:'✅'} ];\n<div className=\"grid\">{KPIS.map(k => <KpiCard key={k.id} {...k} />)}</div>",
+      "predict": "Add a 3rd object to KPIS — how many cards render now? (Answer: three, with no markup changes.)",
+      "challenge": {
+        "prompt": "Given an array of 3 tasks, render a <TaskItem> for each with a proper key.",
+        "starter": "const tasks = [ {id:1,text:'A'}, {id:2,text:'B'}, {id:3,text:'C'} ];\n// map tasks -> <TaskItem key=... text=... />",
+        "solution": "<ul>{tasks.map(t => <TaskItem key={t.id} text={t.text} />)}</ul>",
+        "check": ["Uses .map", "Provides a unique key", "Renders one item per task"]
+      },
+      "misconceptions": ["Using the array index as key.", "Forgetting the key entirely (console warning)."]
+    },
+    {
+      "id": "usestate",
+      "title": "State with useState",
+      "level": 2,
+      "prereqs": ["components", "props"],
+      "why": "State is memory that survives re-renders and drives what the UI shows.",
+      "explain": {
+        "eli5": "useState gives your component a variable it remembers, plus a button to change it. Change it → the UI updates automatically.",
+        "standard": "const [count, setCount] = useState(0). Call setCount(next) to update; React re-renders with the new value. Never mutate state directly.",
+        "deep": "State updates are asynchronous and batched. Use the updater form setCount(c => c + 1) when the next value depends on the previous. Each useState call is tied to render order — never call hooks conditionally."
+      },
+      "example": "import { useState } from 'react';\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;\n}",
+      "predict": "Click the button 3 times — what does it show? (Answer: Count: 3.)",
+      "challenge": {
+        "prompt": "Build a Counter with + and − buttons that never goes below 0.",
+        "starter": "function Counter() {\n  const [count, setCount] = useState(0);\n  // add + and − buttons; clamp at 0\n}",
+        "solution": "function Counter() {\n  const [count, setCount] = useState(0);\n  return (<div>\n    <button onClick={() => setCount(c => Math.max(0, c - 1))}>−</button>\n    <span>{count}</span>\n    <button onClick={() => setCount(c => c + 1)}>+</button>\n  </div>);\n}",
+        "check": ["Uses useState", "Increments and decrements", "Never negative"]
+      },
+      "misconceptions": ["Mutating state (count++) instead of calling the setter.", "Calling hooks inside conditions or loops."]
+    },
+    {
+      "id": "events-forms",
+      "title": "Events & Controlled Inputs",
+      "level": 2,
+      "prereqs": ["usestate"],
+      "why": "Controlled inputs keep the UI and your state perfectly in sync.",
+      "explain": {
+        "eli5": "Tie an input's value to state. When the user types, you update state; the input shows exactly what's in state.",
+        "standard": "value={draft} + onChange={e => setDraft(e.target.value)} makes a controlled input. Handle Enter with onKeyDown.",
+        "deep": "Controlled components make the React state the single source of truth, enabling validation, formatting, and conditional disabling. Uncontrolled inputs (refs) are an escape hatch for perf or integrating non-React code."
+      },
+      "example": "const [draft, setDraft] = useState('');\n<input value={draft} onChange={e => setDraft(e.target.value)} />",
+      "predict": "If state is 'hi' and you type 'x', what does the input show? (Answer: 'hix'.)",
+      "challenge": {
+        "prompt": "Make a text input that shows a live character count below it.",
+        "starter": "const [text, setText] = useState('');\n// controlled input + <p>{text.length} chars</p>",
+        "solution": "<>\n  <input value={text} onChange={e => setText(e.target.value)} />\n  <p>{text.length} chars</p>\n</>",
+        "check": ["Controlled input", "Count updates live"]
+      },
+      "misconceptions": ["Setting value without onChange (input becomes read-only).", "Reading e.target.value after an await without capturing it first."]
+    },
+    {
+      "id": "lifting-state",
+      "title": "State Down, Events Up (Lifting)",
+      "level": 2,
+      "prereqs": ["usestate", "events-forms", "children-composition"],
+      "why": "When two components need the same data, move state to their shared parent and pass callbacks down.",
+      "explain": {
+        "eli5": "The parent holds the list. It hands data DOWN as props and hands children a phone number (callback) to call UP when something happens.",
+        "standard": "Parent owns tasks + add/toggle/remove. Children (AddTaskForm, TaskItem) receive onAdd/onToggle via props and invoke them — they never own the list.",
+        "deep": "Lifting state creates a single source of truth and one-way data flow. If prop-drilling gets deep, reach for Context or a store — but only when the pain is real."
+      },
+      "example": "function TaskBoard(){\n  const [tasks,setTasks]=useState([]);\n  const add=(text)=>setTasks(p=>[...p,{id:Date.now(),text,done:false}]);\n  return <AddTaskForm onAdd={add} />; // child reports UP via onAdd\n}",
+      "predict": "Who owns the task array — the form or the board? (Answer: the board, the parent.)",
+      "challenge": {
+        "prompt": "AddTaskForm has local input state but calls onAdd(text) to hand the value to TaskBoard. Wire it up.",
+        "starter": "function AddTaskForm({ onAdd }) {\n  const [draft, setDraft] = useState('');\n  // on submit: onAdd(draft), then clear\n}",
+        "solution": "function AddTaskForm({ onAdd }) {\n  const [draft, setDraft] = useState('');\n  const submit = () => { const t = draft.trim(); if (t){ onAdd(t); setDraft(''); } };\n  return <><input value={draft} onChange={e=>setDraft(e.target.value)} /><button onClick={submit}>Add</button></>;\n}",
+        "check": ["Local draft state", "Calls onAdd with the value", "Clears after submit"]
+      },
+      "misconceptions": ["Duplicating the list in both parent and child.", "Mutating the array instead of returning a new one."]
+    },
+    {
+      "id": "data-separation",
+      "title": "Data-Driven UI",
+      "level": 3,
+      "prereqs": ["lists-keys"],
+      "why": "Keep data in its own file so components stay dumb and swappable — replace mock data with an API and the UI won't change.",
+      "explain": {
+        "eli5": "Numbers live in a data file. The Dashboard just draws whatever the data says. Change data → UI follows.",
+        "standard": "Export KPIS from data/kpis.ts; Dashboard imports and maps it. No hard-coded numbers in components.",
+        "deep": "Separating data from presentation isolates change. The same components render mock data today and fetched data tomorrow; tests can inject fixtures; designers can tweak UI without touching business data."
+      },
+      "example": "// data/kpis.ts\nexport const KPIS = [ {id:'open',label:'Open',value:'9',icon:'🟡',delta:-12} ];\n// Dashboard.tsx\nimport { KPIS } from '../data/kpis';\n{KPIS.map(k => <KpiCard key={k.id} {...k} />)}",
+      "predict": "To add a metric, do you edit the Dashboard or the data file? (Answer: just the data file.)",
+      "challenge": {
+        "prompt": "Move a hard-coded KPI array out of the component into data/kpis.ts and import it.",
+        "starter": "// BEFORE: array is inline in Dashboard\n// TODO: export it from data/kpis.ts and import",
+        "solution": "// data/kpis.ts\nexport const KPIS = [/* ... */];\n// Dashboard.tsx\nimport { KPIS } from '../data/kpis';",
+        "check": ["Data exported from its own module", "Component imports it", "No inline data left"]
+      },
+      "misconceptions": ["Leaving business data hard-coded in JSX.", "Mixing fetch logic into presentational components."]
+    },
+    {
+      "id": "derived-conditional",
+      "title": "Derived & Conditional Rendering",
+      "level": 3,
+      "prereqs": ["usestate", "lists-keys"],
+      "why": "Compute values from state at render time instead of storing them — fewer bugs, one source of truth.",
+      "explain": {
+        "eli5": "Don't store 'remaining count' in state — just count the unfinished tasks each render. Show an empty message only when the list is empty.",
+        "standard": "const remaining = tasks.filter(t=>!t.done).length; and {list.length===0 ? <Empty/> : <List/>}.",
+        "deep": "Derived state avoids sync bugs where two pieces of state disagree. Memoize expensive derivations with useMemo only after profiling shows a need."
+      },
+      "example": "const remaining = tasks.filter(t => !t.done).length;\nreturn tasks.length === 0 ? <p>All clear ✨</p> : <TaskList tasks={tasks} />;",
+      "predict": "Should 'remaining' be its own useState? (Answer: no — derive it from tasks.)",
+      "challenge": {
+        "prompt": "Show '{remaining} of {total} remaining' and an empty state, both derived from the tasks array.",
+        "starter": "// derive remaining + total from tasks; conditionally render empty state",
+        "solution": "const total = tasks.length, remaining = tasks.filter(t=>!t.done).length;\nreturn total === 0 ? <p>Empty</p> : <><List/><p>{remaining} of {total} remaining</p></>;",
+        "check": ["Values derived, not stored", "Empty state handled"]
+      },
+      "misconceptions": ["Storing derived values in state and forgetting to update them.", "Using && with a number (0 && <X/> renders 0)."]
+    },
+    {
+      "id": "useeffect",
+      "title": "Side Effects with useEffect",
+      "level": 4,
+      "prereqs": ["usestate"],
+      "why": "useEffect runs code AFTER render for things outside React — timers, subscriptions, syncing to storage.",
+      "explain": {
+        "eli5": "Sometimes you need to do something after the screen updates, like save to disk. useEffect is where that goes.",
+        "standard": "useEffect(() => { /* effect */ return () => {/* cleanup */}; }, [deps]). It runs when deps change.",
+        "deep": "Effects synchronize your component with external systems. The dependency array controls re-runs; the cleanup prevents leaks. Prefer deriving during render over effects; reach for effects only for true side effects."
+      },
+      "example": "useEffect(() => {\n  document.title = `${remaining} tasks left`;\n}, [remaining]);",
+      "predict": "If remaining doesn't change, does the effect re-run on other renders? (Answer: no.)",
+      "challenge": {
+        "prompt": "Update document.title to the number of open tasks whenever it changes.",
+        "starter": "// useEffect that sets document.title from `remaining`, dep [remaining]",
+        "solution": "useEffect(() => { document.title = `${remaining} open`; }, [remaining]);",
+        "check": ["Uses useEffect", "Correct dependency array"]
+      },
+      "misconceptions": ["Missing dependencies (stale values).", "Forgetting cleanup for subscriptions/timers.", "Using an effect for something derivable during render."]
+    },
+    {
+      "id": "localstorage-persistence",
+      "title": "Persistence with localStorage",
+      "level": 4,
+      "prereqs": ["useeffect"],
+      "why": "Make tasks survive a refresh — still 100% frontend, no database.",
+      "explain": {
+        "eli5": "Save the list to the browser's little notebook (localStorage) whenever it changes, and read it back on startup.",
+        "standard": "Load initial state from localStorage in useState's initializer; write to it in a useEffect keyed on the data.",
+        "deep": "localStorage is synchronous and string-only — JSON.stringify/parse around it. For larger/async needs use IndexedDB. Guard for SSR where window is undefined."
+      },
+      "example": "const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem('tasks') || '[]'));\nuseEffect(() => { localStorage.setItem('tasks', JSON.stringify(tasks)); }, [tasks]);",
+      "predict": "After adding a task and refreshing, is it still there? (Answer: yes.)",
+      "challenge": {
+        "prompt": "Persist the task list to localStorage and restore it on load.",
+        "starter": "// lazy initializer reads localStorage; effect writes on change",
+        "solution": "const [tasks,setTasks]=useState(()=>JSON.parse(localStorage.getItem('tasks')||'[]'));\nuseEffect(()=>localStorage.setItem('tasks',JSON.stringify(tasks)),[tasks]);",
+        "check": ["Reads on init", "Writes on change", "JSON serialized"]
+      },
+      "misconceptions": ["Storing objects without JSON.stringify.", "Reading localStorage on every render instead of a lazy initializer."]
+    },
+    {
+      "id": "custom-hooks",
+      "title": "Custom Hooks",
+      "level": 5,
+      "prereqs": ["usestate", "useeffect"],
+      "why": "Extract reusable stateful logic into a function starting with 'use' — the ultimate reuse.",
+      "explain": {
+        "eli5": "A custom hook is your own mini-tool made of other hooks. Package the task logic once, use it in any component.",
+        "standard": "function useTasks(initial){ const [tasks,setTasks]=useState(initial); const add=…; return { tasks, add, toggle, remove }; }",
+        "deep": "Custom hooks share logic, not state — each call gets its own state. They compose other hooks, enabling testable, reusable behavior (useLocalStorage, useToggle). Follow the rules of hooks."
+      },
+      "example": "function useToggle(init=false){\n  const [on,setOn]=useState(init);\n  const toggle=()=>setOn(o=>!o);\n  return [on, toggle];\n}\n// const [open, toggleOpen] = useToggle();",
+      "predict": "Do two components calling useToggle() share the same on/off value? (Answer: no — separate state each.)",
+      "challenge": {
+        "prompt": "Write useTasks() that encapsulates the tasks array plus add/toggle/remove, then use it in TaskBoard.",
+        "starter": "function useTasks(initial = []) {\n  // useState + add/toggle/remove; return them\n}",
+        "solution": "function useTasks(initial=[]) {\n  const [tasks,setTasks]=useState(initial);\n  const add=t=>setTasks(p=>[...p,{id:Date.now(),text:t,done:false}]);\n  const toggle=id=>setTasks(p=>p.map(x=>x.id===id?{...x,done:!x.done}:x));\n  const remove=id=>setTasks(p=>p.filter(x=>x.id!==id));\n  return { tasks, add, toggle, remove };\n}",
+        "check": ["Name starts with use", "Returns state + actions", "TaskBoard consumes it"]
+      },
+      "misconceptions": ["Naming it without the 'use' prefix.", "Expecting shared state across calls.", "Calling it conditionally."]
+    }
+  ]
+}

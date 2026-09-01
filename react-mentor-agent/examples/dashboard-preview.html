@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Data-Driven UI — live preview</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:32px;}
+  .wrap{max-width:640px;margin:0 auto;} h1{font-size:1.3rem;} .muted{color:#94a3b8;}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;margin:8px 0;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+  .kpi-value{font-size:1.8rem;font-weight:800;} .kpi-label{color:#94a3b8;font-size:.85rem;}
+  button{background:#6366f1;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;margin:2px;}
+  input{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:8px;}
+  li{list-style:none;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px;margin:4px 0;display:flex;gap:8px;align-items:center;}
+  li span{flex:1;} .done span{text-decoration:line-through;color:#94a3b8;}
+  .badge{background:#6366f1;border-radius:6px;padding:2px 8px;font-size:.8rem;margin:2px;display:inline-block;}</style></head>
+<body><div class="wrap"><div id="root"></div>
+<p class="muted">Concept: <b>Data-Driven UI</b> · self-contained preview (no CDN/build). Open the .jsx next to it to see the real React.</p>
+</div>
+<script>
+
+  function h(tag, props = {}, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === "className") el.className = v;
+      else if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2).toLowerCase(), v);
+      else if (k === "value") el.value = v; else if (k === "checked") el.checked = v;
+      else el.setAttribute(k, v);
+    }
+    kids.flat().forEach(c => { if (c==null||c===false) return;
+      el.appendChild(typeof c === "object" ? c : document.createTextNode(String(c))); });
+    return el;
+  }
+const root = document.getElementById("root");
+
+    // DATA lives apart from the view:
+    const KPIS=[{id:"open",icon:"🟡",value:"9",label:"Open",delta:-12},{id:"done",icon:"✅",value:"15",label:"Done",delta:20}];
+    function KpiCard(p){ const up=p.delta>=0;
+      return h("div",{className:"card"}, h("div",{},p.icon),
+        h("div",{className:"kpi-value"},p.value), h("div",{className:"kpi-label"},p.label),
+        h("div",{className:"muted"}, (up?"▲ ":"▼ ")+Math.abs(p.delta)+"%")); }
+    root.appendChild(h("h1",{},"Data-driven: add data, not markup"));
+    root.appendChild(h("div",{className:"grid"}, KPIS.map(KpiCard)));
+</script></body></html>
